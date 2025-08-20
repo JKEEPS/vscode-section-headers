@@ -29,7 +29,7 @@
     "keybindings": [
       {
         "command": "sectionHeaders.insert",
-        "key": "alt+shift+r",
+        "key": "alt+shift+h",
         "when": "editorTextFocus"
       },
       {
