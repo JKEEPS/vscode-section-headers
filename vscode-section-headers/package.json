@@ -1,0 +1,106 @@
+{
+  "name": "vscode-section-headers",
+  "displayName": "Section Headers (RStudio-style)",
+  "description": "Insert RStudio-style section headers like `# My Section ----`, with optional folding between headers.",
+  "version": "0.1.0",
+  "publisher": "your-publisher",
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:sectionHeaders.insert",
+    "onLanguage:r"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "sectionHeaders.insert",
+        "title": "Section Headers: Insert Section Header"
+      },
+      {
+        "command": "sectionHeaders.rule",
+        "title": "Section Headers: Insert Dashed Rule"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "sectionHeaders.insert",
+        "key": "alt+shift+h",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "sectionHeaders.rule",
+        "key": "alt+shift+-",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "Section Headers",
+      "properties": {
+        "sectionHeaders.patterns": {
+          "type": "object",
+          "default": {
+            "r": "# ${name} ----",
+            "python": "# ${name} ----",
+            "julia": "# ${name} ----",
+            "javascript": "// ${name} ----",
+            "typescript": "// ${name} ----",
+            "c": "// ${name} ----",
+            "cpp": "// ${name} ----",
+            "java": "// ${name} ----",
+            "go": "// ${name} ----",
+            "rust": "// ${name} ----",
+            "plaintext": "# ${name} ----"
+          },
+          "markdownDescription": "Per-language header template. Use ${name} placeholder."
+        },
+        "sectionHeaders.foldingRegex": {
+          "type": "string",
+          "default": "^(#|//|/\\*)\\s?.*----\\s*$",
+          "markdownDescription": "Regex (start-of-line) that marks a header line for folding."
+        },
+        "sectionHeaders.ruleTemplates": {
+          "type": "object",
+          "default": {
+            "r": "# ------------------------------",
+            "python": "# ------------------------------",
+            "julia": "# ------------------------------",
+            "javascript": "// ------------------------------",
+            "typescript": "// ------------------------------",
+            "c": "// ------------------------------",
+            "cpp": "// ------------------------------",
+            "java": "// ------------------------------",
+            "go": "// ------------------------------",
+            "rust": "// ------------------------------",
+            "plaintext": "# ------------------------------"
+          },
+          "markdownDescription": "Per-language dashed rule template (no ${name})."
+        },
+        "sectionHeaders.targetLineLength": {
+          "type": "number",
+          "default": 80,
+          "markdownDescription": "Target line length for section headers and rules. Dashes will be adjusted to meet this length."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "package": "vsce package",
+    "publish": "vsce publish",
+    "lint": "eslint --ext .ts src"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "@types/vscode": "^1.88.0",
+    "eslint": "^9.9.0",
+    "typescript": "^5.5.4",
+    "@vscode/vsce": "^3.0.0"
+  }
+}
