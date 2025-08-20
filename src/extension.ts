@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
-  // Insert named section header
+  // Insert named section header (Esc cancels)
   const insert = vscode.commands.registerCommand('sectionHeaders.insert', async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) { return; }
@@ -10,38 +10,42 @@ export function activate(context: vscode.ExtensionContext) {
     const cfg = vscode.workspace.getConfiguration();
     const patterns = cfg.get<Record<string, string>>('sectionHeaders.patterns') ?? {};
     const targetLineLength = cfg.get<number>('sectionHeaders.targetLineLength') ?? 80;
-    let template = patterns[lang] || patterns['plaintext'] || '# ${name} ----';
+    const template = patterns[lang] || patterns['plaintext'] || '# ${name} ----';
 
     // Use first selection text if present, else prompt
     const primarySel = editor.selections[0];
     const selectedText = editor.document.getText(primarySel).trim();
     const defaultName = selectedText.length ? selectedText : 'Section';
 
-    const name = selectedText.length
-      ? selectedText
-      : (await vscode.window.showInputBox({ prompt: 'Section name', value: defaultName })) ?? defaultName;
-
-    // Calculate dashes for header
-    const namePlaceholder = '${name}';
-    let headerLine: string;
-
-    // Start with the template, replace the name placeholder
-    let processedTemplate = template.replace(namePlaceholder, name);
-
-    // Find any existing trailing dashes in the processed template
-    const trailingDashesMatch = processedTemplate.match(/(-+)$/); // Match dashes at the very end
-    let contentBeforeDashes = processedTemplate;
-    if (trailingDashesMatch) {
-      // If trailing dashes exist, remove them to calculate the base content length
-      contentBeforeDashes = processedTemplate.substring(0, processedTemplate.length - trailingDashesMatch[0].length);
+    let name: string;
+    if (selectedText.length) {
+      name = selectedText;
+    } else {
+      const input = await vscode.window.showInputBox({
+        prompt: 'Section name',
+        value: defaultName,
+        ignoreFocusOut: true
+      });
+      if (input === undefined) {
+        // Esc pressed → cancel entirely
+        return;
+      }
+      name = input.trim().length ? input.trim() : defaultName;
     }
 
-    // Calculate how many dashes are needed to reach the target line length
+    // Build header line to target length by adjusting trailing dashes
+    const processedTemplate = template.replace('${name}', name);
+    const trailingDashesMatch = processedTemplate.match(/(-+)$/); // dashes at end
+    let contentBeforeDashes = processedTemplate;
+    if (trailingDashesMatch) {
+      contentBeforeDashes = processedTemplate.substring(
+        0,
+        processedTemplate.length - trailingDashesMatch[0].length
+      );
+    }
     const currentContentLength = contentBeforeDashes.length;
     const dashesToAdd = Math.max(0, targetLineLength - currentContentLength);
-
-    // Construct the final header line
-    headerLine = `${contentBeforeDashes}${'-'.repeat(dashesToAdd)}`;
+    const headerLine = `${contentBeforeDashes}${'-'.repeat(dashesToAdd)}`;
 
     await editor.edit((edit: vscode.TextEditorEdit) => {
       const doneLines = new Set<number>();
@@ -66,13 +70,12 @@ export function activate(context: vscode.ExtensionContext) {
     const targetLineLength = cfg.get<number>('sectionHeaders.targetLineLength') ?? 80;
     let lineText = rules[lang] || rules['plaintext'] || '# ------------------------------';
 
-    // Calculate dashes for rule
-    const trailingDashesMatch = lineText.match(/(-+)$/); // Match dashes at the very end
+    // Adjust trailing dashes to reach target length
+    const trailingDashesMatch = lineText.match(/(-+)$/);
     let contentBeforeDashes = lineText;
     if (trailingDashesMatch) {
       contentBeforeDashes = lineText.substring(0, lineText.length - trailingDashesMatch[0].length);
     }
-
     const currentContentLength = contentBeforeDashes.length;
     const dashesToAdd = Math.max(0, targetLineLength - currentContentLength);
     lineText = `${contentBeforeDashes}${'-'.repeat(dashesToAdd)}`;
@@ -100,12 +103,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(insert, rule, folding);
 
-  const sb = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-  sb.text = '$(list-unordered) Header';
-  sb.tooltip = 'Insert Section Header';
-  sb.command = 'sectionHeaders.insert';
-  sb.show();
-  context.subscriptions.push(sb);
+  // (Status bar button removed as requested)
 }
 
 class HeaderFoldingProvider implements vscode.FoldingRangeProvider {

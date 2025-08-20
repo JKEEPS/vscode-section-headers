@@ -1,6 +1,7 @@
 out
 node_modules
 .vscode-test/
+# Section ----------------------------------------------------------------------
 #*.vsix
 .DS_Store
 .vscode/

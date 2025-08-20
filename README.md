@@ -18,9 +18,9 @@ Insert RStudio-style section headers like:
 
 ## Default Keybindings
 
-- Insert Section Header: `Alt+Shift+R` (when languageId == r)
+- Insert Section Header: `Ctrl+Shift+H` (Windows/Linux), `Cmd+Shift+H` (macOS)
 
-- Insert Dashed Rule: `Alt+Shift+-`
+- Insert Dashed Rule: `Ctrl+Shift+-` (Windows/Linux), `Cmd+Shift+-` (macOS)
 
 Rebind in Keyboard Shortcuts if you prefer.
 

@@ -33,14 +33,14 @@
     "keybindings": [
       {
         "command": "sectionHeaders.insert",
-        "key": "alt+shift+r",
+        "key": "ctrl+shift+h",
         "mac": "cmd+shift+h",
         "when": "editorTextFocus"
       },
       {
         "command": "sectionHeaders.rule",
-        "key": "alt+shift+-",
-        "mac": "cmd+shift+d",
+        "key": "ctrl+shift+-",
+        "mac": "cmd+shift+-",
         "when": "editorTextFocus"
       }
     ],
