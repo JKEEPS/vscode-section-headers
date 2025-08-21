@@ -36,24 +36,3 @@ Rebind in Keyboard Shortcuts if you prefer.
 
 By default, R, Python, Julia use `#`, JS/TS/C/CPP/Java/Go/Rust use `//`. You can add others in settings.
 
-## Development
-```
-npm i
-npm run watch
-# Press F5 in VS Code to launch the Extension Development Host
-```
-
-## Packaging & Publishing
-
-Replace `"publisher": "your-publisher"` in package.json with your Marketplace publisher ID.
-
-Install vsce:
-
-```
-npm i -g @vscode/vsce
-```
-
-Package:
-
-```
-npm run package
